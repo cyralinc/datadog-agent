@@ -11,7 +11,7 @@ git checkout $GIT_BRANCH
 
 curl https://s3.amazonaws.com/apt.datadoghq.com/pool/d/da/datadog-agent_$AGENT_VERSION-1_amd64.deb -o datadog-agent_$AGENT_VERSION-1_amd64.deb
 
-docker build --file amd64/Dockerfile --pull --target release --tag gcr.io/cyralpublic/datadog-agent-aptible:v0.1.0 .
+docker build --file amd64/Dockerfile --pull --target release --tag gcr.io/cyralpublic/cyral-datadog-agent-aptible:v0.1.0 .
 
-docker push gcr.io/cyralpublic/datadog-agent-aptible:v0.1.0
+docker push gcr.io/cyralpublic/cyral-datadog-agent-aptible:v0.1.0
 ```
