@@ -145,6 +145,9 @@ RUN tar xzf s6.tgz \
  && chown root:root /readsecret.py \
  && chmod 500 /readsecret.py
 
+COPY aptible_cyral_logs.conf.yaml /etc/datadog-agent/cyral_sidecar.d/conf.yaml
+COPY aptible_cyral_logs.conf.yaml /etc/datadog-agent/conf.d/aptible.d/conf.yaml
+
 # Update links to python binaries
 
 RUN if [ ! -z "$PYTHON_VERSION" ]; then \
@@ -159,19 +162,27 @@ RUN  mv /etc/s6/init/init-stage3 /etc/s6/init/init-stage3-original
 COPY init-stage3          /etc/s6/init/init-stage3
 COPY init-stage3-host-pid /etc/s6/init/init-stage3-host-pid
 
-RUN find /etc -type d,f -perm -o+w -print0 | xargs -0 chmod g-w,o-w
-
 # Expose DogStatsD and trace-agent ports
-EXPOSE 8125/udp 8126/tcp
+EXPOSE 8125/udp 8126/tcp 10518
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=2 \
   CMD ["/probe.sh"]
+
+ENV DD_APM_ENABLED=true \
+  DD_APM_ENV=aptible \
+  DD_APM_NON_LOCAL_TRAFFIC=true \
+  DD_HOSTNAME=cyral_datadog_agent \
+  DD_LOG_LEVEL=off \
+  DD_LOGS_ENABLED=true \
+  DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=false \
+  DD_PROCESS_AGENT_ENABLED=disabled \
+  DD_LOGS_CONFIG_USE_HTTP=true \
+  DD_LOGS_CONFIG_BATCH_WAIT=5
 
 # Leave following directories RW to allow use of kubernetes readonlyrootfs flag
 VOLUME ["/var/run/s6", "/etc/datadog-agent", "/var/log/datadog", "/tmp"]
 
 CMD ["/init"]
-
 
 ################################################################
 #  Sanity checks on the image contents                         #
