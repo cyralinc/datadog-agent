@@ -10,4 +10,4 @@ logs:
     log_processing_rules:
       - type: include_at_match
         name: include_pg_wire_logs
-        pattern: cyral_pg_wire
+        pattern: pg_wire
