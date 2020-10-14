@@ -1,0 +1,13 @@
+init_config:
+
+instances:
+    
+logs:
+  - type: tcp
+    port: 10518
+    service: cyral_sidecar
+    source: aptible
+    log_processing_rules:
+      - type: include_at_match
+        name: include_pg_wire_logs
+        pattern: cyral_pg_wire
